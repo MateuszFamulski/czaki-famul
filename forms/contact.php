@@ -8,15 +8,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $message = filter_input(INPUT_POST, 'message', FILTER_SANITIZE_STRING);
 
     if ($name && $email && $subject && $message) {
-        $to = $receiving_email_address;
-        $headers = "From: $name <$email>\r\n";
-        $body = "Imię: $name\nEmail: $email\n\nWiadomość:\n$message";
+        $mailto_link = "mailto:$receiving_email_address";
+        $mailto_link .= "?subject=" . urlencode($subject);
+        $mailto_link .= "&body=" . urlencode("Imię: $name\nEmail: $email\n\nWiadomość:\n$message");
+        $mailto_link .= "&from=" . urlencode($email);
 
-        if (mail($to, $subject, $body, $headers)) {
-            echo "Wiadomość została wysłana pomyślnie.";
-        } else {
-            echo "Wystąpił błąd podczas wysyłania wiadomości.";
-        }
+        echo "<script type='text/javascript'>window.location.href='$mailto_link';</script>";
     } else {
         echo "Wszystkie pola są wymagane i muszą być poprawne.";
     }
